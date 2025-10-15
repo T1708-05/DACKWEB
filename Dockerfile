@@ -1,10 +1,19 @@
-FROM tomcat:10.1-jdk17
+app = "web-electromartshop"
+primary_region = "sin"
 
-# Copy WAR file to Tomcat webapps directory
-COPY target/DACK_WEB_NHOM1-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+[build]
+dockerfile = "Dockerfile"
 
-# Expose port 8080
-EXPOSE 8080
+[env]
+VNP_RETURN_URL = "https://web-electromartshop.fly.dev/payment-return"
+VNP_TMN_CODE = "K1SH6864"
+VNP_HASH_SECRET = "1J64G1DKLNTS3B30FSYO6XSPMW6QBE7E"
 
-# Start Tomcat
-CMD ["catalina.sh", "run"]
+[http_service]
+internal_port = 8080
+force_https = true
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory_mb = 512

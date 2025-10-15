@@ -1,4 +1,3 @@
-# fly.toml app configuration file
 app = "web-electromartshop"
 primary_region = "sin"
 
@@ -9,22 +8,10 @@ dockerfile = "Dockerfile"
 VNP_RETURN_URL = "https://web-electromartshop.fly.dev/payment-return"
 VNP_TMN_CODE = "K1SH6864"
 VNP_HASH_SECRET = "1J64G1DKLNTS3B30FSYO6XSPMW6QBE7E"
-CATALINA_OPTS = "-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Ho_Chi_Minh"
 
 [http_service]
 internal_port = 8080
 force_https = true
-auto_stop_machines = true
-auto_start_machines = true
-min_machines_running = 0
-processes = ["app"]
-
-[[http_service.checks]]
-grace_period = "10s"
-interval = "30s"
-method = "GET"
-timeout = "5s"
-path = "/home"
 
 [[vm]]
 cpu_kind = "shared"

@@ -1,0 +1,22 @@
+[app]
+name = "web-electromartshop"
+
+[build]
+dockerfile = "Dockerfile"
+
+[env]
+VNP_RETURN_URL = "https://web-electromartshop/payment-return"
+VNP_TMN_CODE = "K1SH6864"
+VNP_HASH_SECRET = "1J64G1DKLNTS3B30FSYO6XSPMW6QBE7E"
+
+[[services]]
+internal_port = 8080
+protocol = "tcp"
+
+[[services.ports]]
+port = 80
+handlers = ["http"]
+
+[[services.ports]]
+port = 443
+handlers = ["tls", "http"]

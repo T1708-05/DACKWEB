@@ -1,0 +1,63 @@
+name: Build and deploy WAR app to Azure Web App - electromartshop
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'   # hoặc 'temurin' đều được
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn -B clean package
+
+      # Đổi tên WAR thành ROOT.war để deploy ở "/"
+      - name: Prepare artifact (rename to ROOT.war)
+        run: |
+          shopt -s nullglob
+          for f in target/*.war; do
+            mv "$f" target/ROOT.war
+            break
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: target/ROOT.war
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.__clientidsecretname__ }}
+          tenant-id: ${{ secrets.__tenantidsecretname__ }}
+          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: electromartshop
+          package: ROOT.war

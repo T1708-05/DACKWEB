@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" 
+    xmlns="https://jakarta.ee/xml/ns/persistence" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence 
+       https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+  <!-- 
+    Railway deployment configuration
+    This file uses environment variables provided by Railway
+    
+    Required environment variables:
+    - DATABASE_URL or (PGHOST, PGPORT, PGDATABASE)
+    - PGUSER
+    - PGPASSWORD
+  -->
+  <persistence-unit name="shopPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+    <properties>
+      <!-- 
+        Database connection will be configured programmatically
+        using DatabaseConfig utility class to read from environment variables
+        
+        For local development, you can still use persistence.xml
+        For Railway deployment, use this configuration
+      -->
+      
+      <!-- Default driver (can be overridden) -->
+      <property name="jakarta.persistence.jdbc.driver"  
+                value="org.postgresql.Driver"/>
+
+      <!-- Schema generation strategy -->
+      <property name="jakarta.persistence.schema-generation.database.action" 
+                value="update"/>
+      
+      <!-- Logging level (WARNING for production) -->
+      <property name="eclipselink.logging.level" value="WARNING"/>
+      
+      <!-- Connection pool settings for production -->
+      <property name="eclipselink.jdbc.connections.initial" value="5"/>
+      <property name="eclipselink.jdbc.connections.min" value="5"/>
+      <property name="eclipselink.jdbc.connections.max" value="20"/>
+      
+      <!-- Performance optimizations -->
+      <property name="eclipselink.cache.shared.default" value="false"/>
+      <property name="eclipselink.weaving" value="static"/>
+      <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+      <property name="eclipselink.jdbc.batch-writing.size" value="100"/>
+    </properties>
+  </persistence-unit>
+</persistence>
